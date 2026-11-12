@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="hi" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Byaj Calculator | X Liya Y Diya</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="h-full font-sans text-slate-800 bg-slate-50 antialiased flex flex-col justify-between">
+
+    <!-- Header -->
+    <header class="bg-indigo-600 text-white shadow-md">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <h1 class="text-lg font-bold tracking-tight">Loan & Byaj Calculator</h1>
+            </div>
+            <span class="text-xs bg-indigo-700 px-2.5 py-1 rounded-full font-medium">Smart Finance</span>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-4xl mx-auto px-4 py-6 w-full flex-grow">
+        
+        <!-- Tabs Navigation -->
+        <div class="flex rounded-xl bg-slate-200 p-1 mb-6 shadow-inner">
+            <button onclick="switchTab('reverse')" id="tab-reverse" class="flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all bg-white text-indigo-600 shadow-sm">
+                🔄 X Liya, Y Diya (Byaj Nikalo)
+            </button>
+            <button onclick="switchTab('standard')" id="tab-standard" class="flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all text-slate-600 hover:text-slate-900">
+                📊 Bank EMI Calculator
+            </button>
+        </div>
+
+        <!-- TAB 1: REVERSE CALCULATOR (X Liya, Y Diya) -->
+        <section id="section-reverse" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 md:p-6 mb-6">
+            <div class="mb-5">
+                <h2 class="text-base font-bold text-slate-900">Kitna Byaj Gaya? (Reverse Calculator)</h2>
+                <p class="text-xs text-slate-500">Agar aapne X amount liya aur total Y amount wapas kiya, toh exact byaj aur percentage nikalein.</p>
+            </div>
+
+            <!-- Presets -->
+            <div class="mb-5">
+                <label class="block text-xs font-semibold text-slate-600 mb-2">Quick Examples (Click to Test):</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="setReversePreset(50000, 60000, 12, 'months')" class="p-2 text-xs border border-slate-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition text-left">
+                        <span class="font-bold block text-slate-700">₹50k → ₹60k</span><span class="text-[10px] text-slate-500">12 Months</span>
+                    </button>
+                    <button onclick="setReversePreset(100000, 125000, 1, 'years')" class="p-2 text-xs border border-slate-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition text-left">
+                        <span class="font-bold block text-slate-700">₹1L → ₹1.25L</span><span class="text-[10px] text-slate-500">1 Year</span>
+                    </button>
+                    <button onclick="setReversePreset(20000, 24000, 10, 'months')" class="p-2 text-xs border border-slate-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition text-left">
+                        <span class="font-bold block text-slate-700">₹20k → ₹24k</span><span class="text-[10px] text-slate-500">10 Months</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+                <!-- X Amount (Principal) -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Kitna Paisa Liya (X Amount - Principal):</label>
+                    <div class="relative rounded-lg shadow-sm">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 font-bold">₹</div>
+                        <input type="number" id="rev-principal" value="50000" oninput="calculateReverse()" class="block w-full pl-8 pr-3 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-white focus:outline-none">
+                    </div>
+                </div>
+
+                <!-- Input Mode Selector -->
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-xs font-semibold text-slate-700">Wapas Kaise Diya / Dene Wale Ho:</label>
+                        <div class="space-x-2 text-[11px]">
+                            <label><input type="radio" name="rev-mode" value="total" checked onchange="toggleRevMode()"> Total Y</label>
+                            <label><input type="radio" name="rev-mode" value="emi" onchange="toggleRevMode()"> Mahine ki EMI</label>
+                        </div>
+                    </div>
+                    <div class="relative rounded-lg shadow-sm" id="rev-total-container">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 font-bold">₹</div>
+                        <input type="number" id="rev-total" value="60000" oninput="calculateReverse()" class="block w-full pl-8 pr-3 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-white focus:outline-none">
+                    </div>
+                    <div class="relative rounded-lg shadow-sm hidden" id="rev-emi-container">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 font-bold">₹</div>
+                        <input type="number" id="rev-emi-input" value="5000" oninput="calculateReverse()" class="block w-full pl-8 pr-3 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-white focus:outline-none">
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+                <!-- Time Tenure -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Kitne Samay Mein (Tenure):</label>
+                    <div class="flex space-x-2">
+                        <input type="number" id="rev-time" value="12" oninput="calculateReverse()" class="block w-full px-3 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-white focus:outline-none">
+                        <select id="rev-time-unit" onchange="calculateReverse()" class="bg-slate-50 border border-slate-300 text-slate-700 text-xs rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <option value="months" selected>Mahine (Months)</option>
+                            <option value="years">Saal (Years)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Card for Reverse -->
+            <div class="bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-100 rounded-xl p-4 md:p-5">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-indigo-600 mb-3">Calculation Results</h3>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                    <div class="bg-white p-3 rounded-lg border border-indigo-100 shadow-xs">
+                        <span class="block text-[11px] text-slate-500 font-medium">Extra Paisa Diya (Byaj)</span>
+                        <span id="res-extra-money" class="text-base font-bold text-red-600">₹0</span>
+                    </div>
+                    <div class="bg-white p-3 rounded-lg border border-indigo-100 shadow-xs">
+                        <span class="block text-[11px] text-slate-500 font-medium">Total Byaj % (Absolute)</span>
+                        <span id="res-flat-pct" class="text-base font-bold text-indigo-600">0%</span>
+                    </div>
+                    <div class="bg-white p-3 rounded-lg border border-indigo-100 shadow-xs">
+                        <span class="block text-[11px] text-slate-500 font-medium">Per Year Flat Rate</span>
+                        <span id="res-annual-flat" class="text-base font-bold text-indigo-600">0% p.a.</span>
+                    </div>
+                    <div class="bg-white p-3 rounded-lg border border-indigo-100 shadow-xs">
+                        <span class="block text-[11px] text-slate-500 font-medium">Reducing Rate (APR)</span>
+                        <span id="res-reducing-apr" class="text-base font-bold text-emerald-600">0% p.a.</span>
+                    </div>
+                </div>
+
+                <div class="text-xs text-slate-600 bg-white/80 p-3 rounded-lg border border-indigo-100 flex justify-between items-center">
+                    <span id="res-summary-text">Aapne ₹50,000 par total ₹10,000 byaj diya.</span>
+                    <span id="res-emi-display" class="font-semibold text-slate-900">Mahine ki EMI: ₹5,000</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: STANDARD BANK EMI CALCULATOR -->
+        <section id="section-standard" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 md:p-6 mb-6 hidden">
+            <div class="mb-5">
+                <h2 class="text-base font-bold text-slate-900">Standard Loan EMI & Byaj Calculator</h2>
+                <p class="text-xs text-slate-500">Bank loan ya standard interest rates ke hisab se monthly installment nikalein.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
+                <!-- Loan Amount -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Loan Amount (₹):</label>
+                    <div class="relative rounded-lg shadow-sm">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 font-bold">₹</div>
+                        <input type="number" id="std-principal" value="500000" oninput="calculateStandard()" class="block w-full pl-8 pr-3 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-white focus:outline-none">
+                    </div>
+                </div>
+
+                <!-- Interest Rate -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Interest Rate (% P.A.):</label>
+                    <div class="relative rounded-lg shadow-sm">
+                        <input type="number" step="0.1" id="std-rate" value="10.5" oninput="calculateStandard()" class="block w-full pl-3 pr-8 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-white focus:outline-none">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400 font-bold">%</div>
+                    </div>
+                </div>
+
+                <!-- Tenure -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Loan Tenure:</label>
+                    <div class="flex space-x-2">
+                        <input type="number" id="std-time" value="5" oninput="calculateStandard()" class="block w-full px-3 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-white focus:outline-none">
+                        <select id="std-time-unit" onchange="calculateStandard()" class="bg-slate-50 border border-slate-300 text-slate-700 text-xs rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <option value="years" selected>Saal (Years)</option>
+                            <option value="months">Mahine (Months)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Standard Results & Chart Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center bg-slate-50 p-4 md:p-5 rounded-xl border border-slate-200 mb-5">
+                <div class="space-y-3">
+                    <div class="bg-white p-3 rounded-lg border border-slate-200">
+                        <span class="block text-xs text-slate-500">Monthly EMI</span>
+                        <span id="std-res-emi" class="text-xl font-bold text-indigo-600">₹0</span>
+                    </div>
+                    <div class="bg-white p-3 rounded-lg border border-slate-200">
+                        <span class="block text-xs text-slate-500">Total Interest (Byaj)</span>
+                        <span id="std-res-interest" class="text-base font-bold text-red-600">₹0</span>
+                    </div>
+                    <div class="bg-white p-3 rounded-lg border border-slate-200">
+                        <span class="block text-xs text-slate-500">Total Payment (Principal + Interest)</span>
+                        <span id="std-res-total" class="text-base font-bold text-slate-900">₹0</span>
+                    </div>
+                </div>
+                <div class="flex justify-center h-48">
+                    <canvas id="loanChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-3 text-center text-xs text-slate-500">
+        Loan Byaj Calculator App &bull; Made with Code
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        function formatINR(num) {
+            if (isNaN(num)) return "₹0";
+            return "₹" + Math.round(num).toLocaleString('en-IN');
+        }
+
+        function switchTab(tab) {
+            const revSec = document.getElementById('section-reverse');
+            const stdSec = document.getElementById('section-standard');
+            const revTab = document.getElementById('tab-reverse');
+            const stdTab = document.getElementById('tab-standard');
+
+            if (tab === 'reverse') {
+                revSec.classList.remove('hidden');
+                stdSec.classList.add('hidden');
+                revTab.className = "flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all bg-white text-indigo-600 shadow-sm";
+                stdTab.className = "flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all text-slate-600 hover:text-slate-900";
+            } else {
+                stdSec.classList.remove('hidden');
+                revSec.classList.add('hidden');
+                stdTab.className = "flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all bg-white text-indigo-600 shadow-sm";
+                revTab.className = "flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all text-slate-600 hover:text-slate-900";
+                calculateStandard();
+            }
+        }
+
+        function toggleRevMode() {
+            const mode = document.querySelector('input[name="rev-mode"]:checked').value;
+            const totalContainer = document.getElementById('rev-total-container');
+            const emiContainer = document.getElementById('rev-emi-container');
+            if (mode === 'total') {
+                totalContainer.classList.remove('hidden');
+                emiContainer.classList.add('hidden');
+            } else {
+                totalContainer.classList.add('hidden');
+                emiContainer.classList.remove('hidden');
+            }
+            calculateReverse();
+        }
+
+        function setReversePreset(p, t, time, unit) {
+            document.getElementById('rev-principal').value = p;
+            document.querySelector('input[name="rev-mode"][value="total"]').checked = true;
+            toggleRevMode();
+            document.getElementById('rev-total').value = t;
+            document.getElementById('rev-time').value = time;
+            document.getElementById('rev-time-unit').value = unit;
+            calculateReverse();
+        }
+
+        function calculateReverse() {
+            const p = parseFloat(document.getElementById('rev-principal').value) || 0;
+            const mode = document.querySelector('input[name="rev-mode"]:checked').value;
+            let timeVal = parseFloat(document.getElementById('rev-time').value) || 0;
+            const unit = document.getElementById('rev-time-unit').value;
+
+            let months = unit === 'years' ? timeVal * 12 : timeVal;
+            if (months <= 0) months = 1;
+
+            let totalY = 0;
+            let emi = 0;
+
+            if (mode === 'total') {
+                totalY = parseFloat(document.getElementById('rev-total').value) || 0;
+                emi = totalY / months;
+            } else {
+                emi = parseFloat(document.getElementById('rev-emi-input').value) || 0;
+                totalY = emi * months;
+            }
+
+            const extra = totalY - p;
+            const flatPct = p > 0 ? (extra / p) * 100 : 0;
+            const years = months / 12;
+            const annualFlat = years > 0 ? flatPct / years : 0;
+
+            // Effective reducing rate approximation using binary search
+            let low = 0, high = 1000, apr = 0;
+            for (let i = 0; i < 50; i++) {
+                let mid = (low + high) / 2;
+                let r = mid / 1200;
+                let calcEmi = p * r * Math.pow(1 + r, months) / (Math.pow(1 + r, months) - 1);
+                if (calcEmi > emi) {
+                    high = mid;
+                } else {
+                    low = mid;
+                    apr = mid;
+                }
+            }
+
+            document.getElementById('res-extra-money').innerText = formatINR(extra);
+            document.getElementById('res-flat-pct').innerText = flatPct.toFixed(1) + '%';
+            document.getElementById('res-annual-flat').innerText = annualFlat.toFixed(1) + '% p.a.';
+            document.getElementById('res-reducing-apr').innerText = (extra <= 0 ? 0 : apr.toFixed(1)) + '% p.a.';
+            document.getElementById('res-summary-text').innerText = `Aapne ${formatINR(p)} par total ${formatINR(extra)} byaj diya.`;
+            document.getElementById('res-emi-display').innerText = `Mahine ki EMI: ${formatINR(emi)}`;
+        }
+
+        let loanChartInstance = null;
+        function calculateStandard() {
+            const p = parseFloat(document.getElementById('std-principal').value) || 0;
+            const annualRate = parseFloat(document.getElementById('std-rate').value) || 0;
+            let timeVal = parseFloat(document.getElementById('std-time').value) || 0;
+            const unit = document.getElementById('std-time-unit').value;
+
+            let months = unit === 'years' ? timeVal * 12 : timeVal;
+            if (months <= 0) months = 1;
+
+            const r = annualRate / 1200;
+            let emi = 0;
+            if (r > 0) {
+                emi = (p * r * Math.pow(1 + r, months)) / (Math.pow(1 + r, months) - 1);
+            } else {
+                emi = p / months;
+            }
+
+            const totalPay = emi * months;
+            const totalInt = totalPay - p;
+
+            document.getElementById('std-res-emi').innerText = formatINR(emi);
+            document.getElementById('std-res-interest').innerText = formatINR(totalInt);
+            document.getElementById('std-res-total').innerText = formatINR(totalPay);
+
+            // Chart update
+            const ctx = document.getElementById('loanChart').getContext('2d');
+            if (loanChartInstance) {
+                loanChartInstance.destroy();
+            }
+            loanChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Principal Amount', 'Total Interest'],
+                    datasets: [{
+                        data: [p, totalInt > 0 ? totalInt : 0],
+                        backgroundColor: ['#4f46e5', '#f43f5e'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }
+                    }
+                }
+            });
+        }
+
+        // Initial calculation trigger
+        calculateReverse();
+    </script>
+</body>
+</html>
