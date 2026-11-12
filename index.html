@@ -3,121 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VyajCalc | Smart Loan & Extra Interest Calculator</title>
+    <title>VyajCalc | Smart Loan Calculator</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] }
-                }
-            }
-        }
-    </script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
 </head>
-<body class="h-full font-sans text-slate-800 bg-slate-50 antialiased flex flex-col justify-between">
+<body class="bg-slate-50 text-slate-800 antialiased min-h-full flex flex-col justify-between">
 
     <!-- Header -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-xs">
-        <div class="max-w-xl mx-auto px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-md">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-10">
+        <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-2.5">
+                <div class="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-sm">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                 </div>
                 <div>
                     <h1 class="text-base font-bold text-slate-900 leading-tight">VyajCalc</h1>
-                    <p class="text-[11px] text-slate-500 font-medium">Smart Loan & Extra Interest Calculator</p>
+                    <p class="text-[11px] text-slate-500">Smart Loan & Extra Interest Calculator</p>
                 </div>
             </div>
-            <div class="bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full text-xs font-semibold text-emerald-700 flex items-center space-x-1">
-                <span>🇮🇳 INR (₹)</span>
-            </div>
+            <span class="text-xs bg-emerald-50 text-emerald-700 font-semibold px-2.5 py-1 rounded-full border border-emerald-100">🇮🇳 INR (₹)</span>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="max-w-xl mx-auto px-4 py-5 w-full flex-grow">
+    <main class="max-w-md mx-auto px-4 py-5 w-full flex-grow">
         
-        <!-- Tabs -->
-        <div class="grid grid-cols-2 gap-2 bg-slate-200/80 p-1.5 rounded-2xl mb-5 shadow-inner">
-            <button onclick="switchTab('reverse')" id="tab-reverse" class="py-2.5 px-3 text-xs font-bold rounded-xl transition-all bg-white text-indigo-600 shadow-sm flex flex-col items-center justify-center">
-                <span>X Liya - Y Diya Calc</span>
+        <!-- Tabs Navigation -->
+        <div class="flex rounded-2xl bg-slate-200/70 p-1 mb-5">
+            <button onclick="switchTab('reverse')" id="tab-reverse" class="flex-1 py-2.5 text-xs font-bold rounded-xl transition-all duration-200 bg-white text-indigo-600 shadow-sm">
+                X Liya - Y Diya Calc
             </button>
-            <button onclick="switchTab('standard')" id="tab-standard" class="py-2.5 px-3 text-xs font-bold rounded-xl transition-all text-slate-600 flex flex-col items-center justify-center">
-                <span>Standard EMI Calc</span>
+            <button onclick="switchTab('standard')" id="tab-standard" class="flex-1 py-2.5 text-xs font-bold rounded-xl transition-all duration-200 text-slate-600">
+                Standard EMI Calc
             </button>
         </div>
 
-        <!-- TAB 1: REVERSE CALCULATOR (X Liya - Y Diya) -->
-        <section id="section-reverse" class="bg-white rounded-3xl shadow-xs border border-slate-200/80 p-5 mb-5">
+        <!-- TAB 1: REVERSE CALCULATOR (X Liya, Y Diya) -->
+        <section id="section-reverse" class="bg-white rounded-3xl shadow-xs border border-slate-200/80 p-5 mb-6">
             <div class="flex justify-between items-start mb-4">
                 <div>
                     <h2 class="text-sm font-bold text-slate-900">Kitna Paisa Zyada Gaya Check Karein</h2>
                     <p class="text-[11px] text-slate-500">Loan amount aur wapas kiye gaye amount se byaj nikalein</p>
                 </div>
-                <button onclick="resetReverse()" class="text-xs text-indigo-600 font-semibold hover:underline flex items-center gap-1">Reset</button>
+                <button onclick="resetReverse()" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">Reset</button>
             </div>
 
-            <!-- Presets -->
+            <!-- Quick Presets -->
             <div class="mb-5">
-                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Quick Presets (Ek Click Mein Try Karein)</label>
+                <label class="block text-[10px] font-bold tracking-wider text-slate-400 uppercase mb-2">Quick Presets (Ek Click Mein Try Karein)</label>
                 <div class="grid grid-cols-2 gap-2">
-                    <button onclick="setReversePreset(13199, 15407, 7, 'months')" class="p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-indigo-50/30 hover:border-indigo-200 text-left transition-all">
-                        <span class="block text-[11px] font-bold text-slate-700">📱 Mobile Loan</span>
-                        <span class="text-[11px] text-indigo-600 font-semibold">₹13,199 @ 7M</span>
+                    <button onclick="setReversePreset(13199, 15407, 7, 'months')" class="p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-indigo-50/40 text-left transition-all">
+                        <span class="text-[11px] font-bold block text-slate-700">📱 Mobile Loan</span>
+                        <span class="text-xs text-indigo-600 font-semibold">₹13,199 @ 7M</span>
                     </button>
-                    <button onclick="setReversePreset(100000, 115000, 1, 'years')" class="p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-indigo-50/30 hover:border-indigo-200 text-left transition-all">
-                        <span class="block text-[11px] font-bold text-slate-700">💸 Cash Loan</span>
-                        <span class="text-[11px] text-indigo-600 font-semibold">₹1L ➔ ₹1.15L (1 Yr)</span>
+                    <button onclick="setReversePreset(100000, 115000, 1, 'years')" class="p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-indigo-50/40 text-left transition-all">
+                        <span class="text-[11px] font-bold block text-slate-700">💸 Cash Loan</span>
+                        <span class="text-xs text-indigo-600 font-semibold">₹1L → ₹1.15L (1 Yr)</span>
                     </button>
-                    <button onclick="setReversePreset(50000, 59000, 6, 'months')" class="p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-indigo-50/30 hover:border-indigo-200 text-left transition-all col-span-2">
-                        <span class="block text-[11px] font-bold text-slate-700">🏍️ Bike Loan</span>
-                        <span class="text-[11px] text-indigo-600 font-semibold">₹50K ➔ ₹59K (6 Months)</span>
+                </div>
+                <div class="mt-2">
+                    <button onclick="setReversePreset(50000, 59000, 6, 'months')" class="w-full p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-indigo-50/40 text-left transition-all">
+                        <span class="text-[11px] font-bold block text-slate-700">🏍️ Bike Loan</span>
+                        <span class="text-xs text-indigo-600 font-semibold">₹50K → ₹59K (6 Months)</span>
                     </button>
                 </div>
             </div>
 
             <div class="space-y-4">
-                <!-- Principal -->
+                <!-- Principal (X) -->
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Kitna Loan Liya (Principal Amount):</label>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Kitna Loan Liya (Principal Amount):</label>
                     <div class="relative flex items-center">
-                        <span class="absolute left-3.5 text-slate-400 font-bold">₹</span>
-                        <input type="number" id="rev-principal" value="13199" oninput="calculateReverse()" class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white">
+                        <span class="absolute left-3.5 text-slate-400 font-medium text-sm">₹</span>
+                        <input type="number" id="rev-principal" value="13199" oninput="calculateReverse()" class="w-full pl-8 pr-3 py-3 bg-slate-50/70 border border-slate-200 rounded-2xl text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white">
                     </div>
                 </div>
 
-                <!-- Repayment Type Toggle & Input -->
+                <!-- Return Mode Toggle -->
                 <div>
-                    <div class="flex justify-between items-center mb-1.5">
+                    <div class="flex justify-between items-center mb-1">
                         <label class="text-xs font-semibold text-slate-700">Wapas Kaise Dena Hai:</label>
-                        <div class="flex items-center space-x-3 text-xs">
-                            <label class="flex items-center space-x-1 cursor-pointer font-medium text-slate-600">
-                                <input type="radio" name="repayMode" value="total" checked onchange="toggleRepayMode()" class="text-indigo-600">
-                                <span>Total Dena Hai</span>
-                            </label>
-                            <label class="flex items-center space-x-1 cursor-pointer font-medium text-slate-600">
-                                <input type="radio" name="repayMode" value="emi" onchange="toggleRepayMode()" class="text-indigo-600">
-                                <span>Monthly EMI</span>
-                            </label>
-                        </div>
                     </div>
+                    <div class="grid grid-cols-2 gap-2 mb-2">
+                        <label class="flex items-center space-x-2 p-2.5 rounded-xl border border-slate-200 cursor-pointer bg-slate-50/50 hover:bg-slate-50">
+                            <input type="radio" name="return-mode" id="mode-total" checked onchange="toggleReturnMode()" class="text-indigo-600 focus:ring-indigo-500">
+                            <span class="text-xs font-medium text-slate-700">Total Dena Hai</span>
+                        </label>
+                        <label class="flex items-center space-x-2 p-2.5 rounded-xl border border-slate-200 cursor-pointer bg-slate-50/50 hover:bg-slate-50">
+                            <input type="radio" name="return-mode" id="mode-emi" onchange="toggleReturnMode()" class="text-indigo-600 focus:ring-indigo-500">
+                            <span class="text-xs font-medium text-slate-700">Monthly EMI</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Total Paid or EMI input -->
+                <div id="wrapper-total-paid">
+                    <label id="label-return-amount" class="block text-xs font-semibold text-slate-700 mb-1">Total Kitna Wapas Dena Hai:</label>
                     <div class="relative flex items-center">
-                        <span class="absolute left-3.5 text-slate-400 font-bold">₹</span>
-                        <input type="number" id="rev-repay-amount" value="15407" oninput="calculateReverse()" class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white">
+                        <span class="absolute left-3.5 text-slate-400 font-medium text-sm">₹</span>
+                        <input type="number" id="rev-total" value="15407" oninput="calculateReverse()" class="w-full pl-8 pr-3 py-3 bg-slate-50/70 border border-slate-200 rounded-2xl text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white">
                     </div>
-                    <p id="repay-hint" class="text-[10px] text-slate-400 mt-1">Poore samay mein kul milakar kitna wapas dena hai</p>
+                    <p id="helper-return-desc" class="text-[10px] text-slate-400 mt-1">Poore samay mein kul milakar kitna wapas dena hai</p>
                 </div>
 
                 <!-- Tenure -->
                 <div class="grid grid-cols-3 gap-2">
                     <div class="col-span-2">
-                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Kitne Samay Ke Liye (Tenure):</label>
-                        <input type="number" id="rev-tenure" value="7" oninput="calculateReverse()" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Kitne Samay Ke Liye (Tenure):</label>
+                        <input type="number" id="rev-tenure" value="7" oninput="calculateReverse()" class="w-full px-3 py-3 bg-slate-50/70 border border-slate-200 rounded-2xl text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-7
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Unit:</label>
+                        <select id="rev-unit" onchange="calculateReverse()" class="w-full px-2 py-3 bg-slate-50/70 border border-slate-200 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white">
+                            <option value="months">Mahine</option>
+                            <option value="years">Saal</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Box -->
+            <div class="mt-5 p-4 bg-indigo-50/60 border border-indigo-100/80 rounded-2xl">
+                <h3 class="text-[10px] font-bold text-indigo-900 uppercase tracking-wider mb-3">Calculation Results (Hisab)</h3>
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div class="bg-white p-3 rounded-xl border border-indigo-100/50 shadow-2xs">
+                        <span class="block text-[10px] text-slate-500 font-medium">Kul Byaj (Total Interest)</span>
+                        <span id="res-rev-interest" class="text-sm font-bold text-indigo-600">₹2,208</span>
+                    </div>
+                    <div class="bg-white p-3 rounded-xl border border-indigo-100/50 shadow-2xs">
+                        <span class="block text-[10px]
